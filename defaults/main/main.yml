@@ -1,0 +1,10 @@
+---
+# defaults file for ns1-updates
+
+dnszone: example.com
+ns1_token: changeme
+ttl_ns_record: 3600
+
+cname_nsrecords:
+  - web
+  - lb

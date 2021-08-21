@@ -1,0 +1,47 @@
+---
+
+- name: checking ns record
+  uri:
+    url: "https://api.nsone.net/v1/zones/{{ zone }}/{{ name }}/{{ type }}"
+    method: GET
+    return_content: yes
+    headers:
+      X-NSONE-Key: "{{ ns1_token }}"
+    status_code: [200, 404]
+  register: result1
+
+- name: new ns record
+  uri:
+    url: "https://api.nsone.net/v1/zones/{{ zone }}/{{ name }}/{{ type }}"
+    method: PUT
+    return_content: yes
+    body_format: json
+    headers:
+      X-NSONE-Key: "{{ ns1_token }}"
+    status_code: [200]
+    body: "{'zone':'{{ zone }}', 'domain':'{{ name }}', 'type':'{{ type }}', 'ttl': {{ ttl_ns_record | default (3600) }} ,'answers': {{ answers }} }"
+  register: result
+  when: result1.status == 404 and state=='present'
+
+- name: update ns record
+  uri:
+    url: "https://api.nsone.net/v1/zones/{{ zone }}/{{ name }}/{{ type }}"
+    method: POST
+    return_content: yes
+    body_format: json
+    headers:
+      X-NSONE-Key: "{{ ns1_token }}"
+    status_code: [200]
+    body: "{ 'ttl': {{ ttl_ns_record | default (3600) }} ,'answers': {{ answers }} }"
+  register: result
+  when: result1.status == 200 and state=='present'
+
+- name: delete ns record
+  uri:
+    url: "https://api.nsone.net/v1/zones/{{ zone }}/{{ name }}/{{ type }}"
+    method: DELETE
+    return_content: yes
+    headers:
+      X-NSONE-Key: "{{ ns1_token }}"
+  register: result
+  when: result1.status == 200 and state=='absent'

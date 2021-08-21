@@ -1,0 +1,14 @@
+---
+
+- name: set fact variables
+  set_fact:
+    name: "{{ item }}.{{ dnszone }}"
+    zone: "{{ dnszone }}"
+    answers: '{% for value in groups[item] %}{ "answer" : [ "{{ value }}" ] },{% endfor %}'
+    type: CNAME
+    state: "{{ item.state | default('present') }}"
+  with_items:
+    - "{{ cname_nsrecords }}"
+
+- name: Include task
+  include_tasks: nsrecord.yml

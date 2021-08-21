@@ -1,0 +1,16 @@
+
+---
+
+- name: set fact variables
+  set_fact:
+    name: "{{ item.name }}"
+    zone: "{{ dnszone }}"
+    answers: [{ "answer" : [ "{{ hostvars.localhost.created_server.vultr_server.v4_main_ip | default ('127.0.0.1') }}" ] }]
+    type: A
+    state: "{{ item.state | default('present') }}"
+  with_items:
+    - "{{ hostvars['localhost']['vultr_servers'] }}"
+  when: item.name == server.name
+
+- name: Include task
+  include_tasks: nsrecord.yml
