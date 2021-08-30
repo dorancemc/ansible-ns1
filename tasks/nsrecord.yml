@@ -1,6 +1,6 @@
 ---
 
-- name: checking ns record
+- name: checking ns record {{ name }}/{{ type }}
   uri:
     url: "https://api.nsone.net/v1/zones/{{ zone }}/{{ name }}/{{ type }}"
     method: GET
@@ -10,7 +10,7 @@
     status_code: [200, 404]
   register: result1
 
-- name: new ns record
+- name: new ns record {{ name }}/{{ type }}
   uri:
     url: "https://api.nsone.net/v1/zones/{{ zone }}/{{ name }}/{{ type }}"
     method: PUT
@@ -23,7 +23,7 @@
   register: result
   when: result1.status == 404 and state=='present'
 
-- name: update ns record
+- name: update ns record {{ name }}/{{ type }}
   uri:
     url: "https://api.nsone.net/v1/zones/{{ zone }}/{{ name }}/{{ type }}"
     method: POST
@@ -36,7 +36,7 @@
   register: result
   when: result1.status == 200 and state=='present'
 
-- name: delete ns record
+- name: delete ns record {{ name }}/{{ type }}
   uri:
     url: "https://api.nsone.net/v1/zones/{{ zone }}/{{ name }}/{{ type }}"
     method: DELETE

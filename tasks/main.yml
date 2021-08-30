@@ -1,5 +1,6 @@
 ---
 
-- name: message
-  debug:
-    msg: "-"
+- name: cname
+  include: cname_nsrecord.yml
+  with_items:
+    - "{{ cname_nsrecords }}"  
